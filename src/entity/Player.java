@@ -1,7 +1,6 @@
 package entity;
 
 import main.GamePanel;
-import main.KeyInput;
 import main.MouseInput;
 
 import javax.imageio.ImageIO;
@@ -20,7 +19,7 @@ import java.util.Queue;
 public class Player extends  Entity {
     
     GamePanel gp;
-    KeyInput KeyInput;
+
     int sizeMovement;
 
     Queue<Movimento> filaMovimento = new LinkedList<Movimento>();
@@ -40,9 +39,12 @@ public class Player extends  Entity {
 
     private boolean isMoving = false;
 
-    public Player(GamePanel gp, KeyInput KeyInput, MouseInput MouseInput, Buttons buttons) {
+    public boolean getIsMove (){
+        return isMoving;
+    }
+
+    public Player(GamePanel gp, MouseInput MouseInput, Buttons buttons) {
         this.gp = gp;
-        this.KeyInput = KeyInput;
         this.MouseInput = MouseInput;
         this.buttons = buttons;
 
@@ -81,10 +83,7 @@ public class Player extends  Entity {
         carrinhoMaps = null;
         System.gc();
         if (caminho.length() != 0){
-            System.out.println("x = " + this.x/gp.tileSize + " y = " + this.y/gp.tileSize);
-            System.out.println("ROTA = " +  caminho);
             String[] stringMovimentos = caminho.split(";");
-
             for(int i = 0; i < stringMovimentos.length; i++){
                 String[] moveText = stringMovimentos[i].split(",");
                 Movimento movimento = new Movimento(Integer.parseInt(moveText[0]), Integer.parseInt(moveText[1]));
@@ -92,13 +91,12 @@ public class Player extends  Entity {
             }
             proximoMovimento();
         } else {
-            buttons.setCone_click(false);
+            buttons.setMove_click(false);
             isMoving = false;
         }
     }
 
     public void proximoMovimento(){
-        
         Movimento movimento = null;
         if(!filaMovimento.isEmpty()){
             movimento = filaMovimento.poll();
@@ -107,24 +105,15 @@ public class Player extends  Entity {
             else if(movimento.getX() == 0 && movimento.getY() == 1) goRight();
             else goLeft();
         } else {
-            buttons.setCone_click(false);
+            buttons.setMove_click(false);
             stop();
-            System.out.println("FIM DA ROTA");
             isMoving = false;
-
         }
     }
 
-    
-    public void start(){
-        update();
-    }
-
-
     public void update() {
-        
-        novaRota96();
-        
+        gerarNovaRota();
+    
         if(Direction.up) {
             entity.setDirection("up");
             y -= speed;
@@ -165,15 +154,14 @@ public class Player extends  Entity {
         Direction.right = false;
     }
 
-
-    public void  novaRota96(){
-        if(MouseInput.cliecked && !isMoving && buttons.isCone_click()){       
-            if (MouseInput.x <= gp.worldWidth && MouseInput.y <= gp.worldHeight){
-                int mouse_pointer_x = Math.round(MouseInput.x/gp.tileSize);
-                int mouse_pointer_y = Math.round(MouseInput.y/gp.tileSize);
-                System.out.println("Clicou !!");
+    public void  gerarNovaRota(){
+        if(MouseInput.isClicked() && !isMoving && buttons.isMove_click()){       
+            if (MouseInput.getMousePositionX() <= gp.worldWidth && MouseInput.getMousePositionY() <= gp.worldHeight){
+                int mouse_pointer_x = Math.round(MouseInput.getMousePositionX()/gp.tileSize);
+                int mouse_pointer_y = Math.round(MouseInput.getMousePositionY()/gp.tileSize);
+                
                 isMoving = true;
-                System.out.println(mouse_pointer_x + "," + mouse_pointer_y);
+                
                 decodificarRota(mouse_pointer_y, mouse_pointer_x);
             }
         }
@@ -189,7 +177,6 @@ public class Player extends  Entity {
     }
 
     public void  draw(Graphics2D g) {
-
         BufferedImage img = null;
 
         switch (entity.getDirection()) {

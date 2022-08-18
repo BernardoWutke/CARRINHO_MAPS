@@ -10,9 +10,6 @@ public class Entity {
     private BufferedImage up, down, left, right;
     private String direction ;
 
-    private int spriteCounter = 0;
-    private int spriteNum = 1;
-
     public BufferedImage getUp() {
         return up;
     }

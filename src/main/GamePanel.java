@@ -12,11 +12,7 @@ public class GamePanel  extends JPanel implements Runnable {
     public final int originalTileSize = 16; //16x16 tile
     public final int scale = 2;
     public final int tileSize = originalTileSize * scale;
-    private boolean loadMap = false;
-
-    public void setLoadMap(boolean loadMap) {
-        this.loadMap = loadMap;
-    }
+    
 
     public int getTileSize() {
         return tileSize;
@@ -49,27 +45,26 @@ public class GamePanel  extends JPanel implements Runnable {
     public final int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxWorldRow;
 
-    KeyInput KeyInput = new KeyInput();
 
     MouseInput MouseInput = new MouseInput();
     Thread gameThread;
-    Buttons buttons = new Buttons(MouseInput,this);
 
-    Player player = new Player(this, KeyInput, MouseInput,buttons);
+    Buttons buttons = new Buttons(MouseInput, this);
+    
+    Player player = new Player(this, MouseInput,buttons);
 
+    public Player getPlayer() {
+        return player;
+    }
    
-
     // GAME SETTINGS
     private int fps = 60;
 
-    
-    
     // Set player position default
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.GRAY);
         this.setDoubleBuffered(true);
-        //this.addKeyListener(KeyInput);
         this.setFocusable(true);
         this.addMouseListener(MouseInput);
         this.addMouseMotionListener(MouseInput);
@@ -87,21 +82,16 @@ public class GamePanel  extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
-        long timeLoadMap = 0;
         int drawCount = 0;
 
         start();
-        
-
 
         while (gameThread != null) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             timer += currentTime - lastTime;
-            timeLoadMap += currentTime - lastTime;
-            lastTime = currentTime;
-
             
+            lastTime = currentTime;
 
             if(delta >= 1){
                 update();
@@ -116,17 +106,12 @@ public class GamePanel  extends JPanel implements Runnable {
                 timer = 0;
                 tileM.loadMap(mapPath);
             }
-
-        
-
         }
-
     }
 
     public void start(){
-        player.start();
+        player.update();
         player.decodificarRota(0,0);
-       // player.proximoMovimento();
     }
 
     public  void update() {

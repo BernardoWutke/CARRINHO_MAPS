@@ -1,5 +1,4 @@
-package editMap;
-
+package editmap;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,21 +14,8 @@ public class EditMap {
         this.gp = gp;
     }
 
-    void printMap(int[][] mapa) {
-        for (int i = 0; i < mapa.length; i++) {
-            for (int j = 0; j < mapa[0].length; j++) {
-                System.out.print(mapa[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    String mapa1 = "src/editMap/mapa.txt";
-    String mapa2 = "src/editMap/mapa2.txt";
-    int mapaAtual = 1;
-
     public void criarBuraco(String path,int x, int y) {
-        int[][] mapa = gerarMapa(path);
+        int[][] mapa = gerarMatrizMapa(path);
         if(mapa[y][x] == 10 || mapa[y][x] == 11 || mapa[y][x] == 12) {
             mapa[y][x] = 13;
             writeFile(path, mapa);
@@ -58,7 +44,7 @@ public class EditMap {
     }
     public void reset(String path) {
         try {
-            int[][] mapaPontos = gerarMapa("/res/maps/mapaReset.txt");
+            int[][] mapaPontos = gerarMatrizMapa("/res/maps/mapaReset.txt");
             FileWriter writer = new FileWriter("./src"+path);
                 
             for (int[] pontos : mapaPontos) {
@@ -75,9 +61,7 @@ public class EditMap {
         }
     }
 
-    
-
-    public int[][] gerarMapa(String path) {
+    public int[][] gerarMatrizMapa(String path) {
 
         int[][] matrizNumeros = null;
 
